@@ -10,3 +10,7 @@
 void setLocale();
 void enableScrolling();
 void setColor(int color);
+void showHelp();
+void showFiles();
+void unluckee();
+void exitApp();
