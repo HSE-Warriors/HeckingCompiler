@@ -1,4 +1,4 @@
-#include "KoshkinCommon.h"
+#include "CommonStuff.h"
 #include <locale.h>		//для setlocale
 
 void setLocale()
