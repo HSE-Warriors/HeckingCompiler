@@ -183,7 +183,7 @@ void countThings(char givenString[])
 			printf("\x1b[35;1m \t> \x1b[32;1mYes.\x1b[35;1m \n\x1b[0m");
 		}
 		//was seen?
-		/*getName(givenString, 0, 4, 0);//0 - var, 1 - f(); 0 - regular, 1 - misspelled, 2 - unused, 3 - empty/selfdef
+		getName(givenString, 0, 4, 0);//0 - var, 1 - f(); 0 - regular, 1 - misspelled, 2 - unused, 3 - empty/selfdef
 		for (int i = 0; i < countOfVariables; i++)
 		{
 			if (strstr(namesOfVariables[i], compareString))
@@ -195,7 +195,7 @@ void countThings(char givenString[])
 		if (seen != 1)
 		{
 			countOfVariables++;
-		}*/
+		}
 
 		int temp = countOfVariables;
 		//is solo?
@@ -267,7 +267,7 @@ void countThings(char givenString[])
 		{
 			printf("\x1b[35;1m > Unused?\n\x1b[0m");
 		}
-		if (1 == 0) //��������� �� ����������� ���� ����������
+		if (1 == 0) //доделать
 		{
 			temp = countOfUnusedVariables;
 			countOfUnusedVariables++;
@@ -386,12 +386,12 @@ void countThings(char givenString[])
 				printf("\x1b[35;1m \t> Count of misspelled functions: \x1b[32;1m%d -> %d\x1b[35;1m.\n\x1b[0m", temp, countOfMisspelledFunctions);
 			}
 		}
-		unused?
+		//unused?
 		if (flag_D == 1)
 		{
 			printf("\x1b[35;1m > Unused?\n\x1b[0m");
 		}
-		if (1 == 0) //��������� �� ����������� ���� ����������
+		if (1 == 0) //доделать
 		{
 			temp = countOfUnusedFunctions;
 			countOfUnusedFunctions++;
@@ -589,17 +589,10 @@ void printThings()
 
 void sayMessage(char which[99])
 {
-	if (strstr(which, "NE"))
-	{
-		setColor(1);
-		printf("\n\n�� ���� ������?\n\n");
-		setColor(0);
-	}
-
 	if (strstr(which, "FE"))
 	{
 		setColor(1);
-		printf("���� �� ��������.\n");
+		printf("Файл не открылся.\n");
 		setColor(0);
 	}
 
@@ -608,7 +601,7 @@ void sayMessage(char which[99])
 		if (flag_D == 1)
 		{
 			setColor(2);
-			printf("findWhitespace() ������ �� �����.\n");
+			printf("findWhitespace() ничего не нашёл.\n");
 			setColor(0);
 		}
 	}

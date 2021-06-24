@@ -20,7 +20,7 @@ int locationOfMain = 0;
 char nameOfMainFile[99];
 
 int countOfVariables = 0;
-char namesOfVariables[99][256] /*= { "" }*/;
+char namesOfVariables[99][256] = { "" };
 int countOfMisspelledVariables = 0;
 char namesOfMisspelledVariables[99][256];
 int countOfUnusedVariables = 0;
