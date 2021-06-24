@@ -88,4 +88,97 @@ int main()
 			}
 		}
 	}
+	
+	for (int i = 0; i < search->counter; ++i)
+	{
+		char Cycled[50][25] = { 0 };
+		int CycledCount = 0;
+		NODE* NewNode = NULL;
+		if (search->FlagOfIncludingInTree[i])
+		{
+			for (int j = 0; j < CountRoots; ++j)
+			{
+				NewNode = BFS(search->NameOfFunction[i], MassOfRoots[j], 1);
+				CleanFlags(MassOfRoots[j]);
+				if (NewNode)
+					break;
+			}
+		}
+		else
+		{
+			NewNode = AddNode(0, search->NameOfFunction[i], MassOfRoots, CountRoots, Cycled, &CycledCount);
+			search->FlagOfIncludingInTree[i] = 1;
+			MassOfRoots[CountRoots] = NewNode;
+			++CountRoots;
+		}
+		FILE* r;
+		r = fopen(search->FileName[i], "r");
+		char Buffs[200] = { 0 };
+		int c = 0;
+		while (c <= search->Positions[i])
+		{
+			fgets(Buffs, 200, r);
+			++c;
+		}
+		int CounterOfBrackets = 1;
+		while (1)
+		{
+			fgets(Buffs, 200, r);
+			if (strchr(Buffs, '{')) ++CounterOfBrackets;
+			if (strchr(Buffs, '}')) --CounterOfBrackets;
+			if (!CounterOfBrackets) 
+				break;
+			for (int j = 0; j < AmountOfFunctions; ++j)
+			{
+				if (strstr(Buffs, search->NameOfFunction[j]))
+				{
+					if (!search->FlagOfIncludingInTree[j])
+					{
+						search->FlagOfIncludingInTree[j] = 1;
+						NewNode = AddNode(NewNode, search->NameOfFunction[j], MassOfRoots, CountRoots, Cycled, &CycledCount);
+						if (NewNode == NULL)
+							break;
+					}
+					else
+					{
+						for (int k = 0; k < CountRoots; ++k)
+						{
+							NODE* tempor = BFS(search->NameOfFunction[j], MassOfRoots[k], 1);
+							CleanFlags(MassOfRoots[k]);
+							if (tempor != NULL)
+							{
+								NewNode->children[NewNode->AmountOfChildren] = tempor;
+								break;
+							}
+						} 
+					}
+					++NewNode->AmountOfChildren;
+				}
+			}
+		}
+		for (int j = 0; j < NewNode->AmountOfChildren; ++j)
+		{
+				strcpy(NewNode->BanListForBFS_DFS[NewNode->AmountOfBan], NewNode->children[j]->Name);
+				++NewNode->AmountOfBan;
+			for (int k = 0; k < CountRoots; ++k)
+			{
+				if (!strcmp(NewNode->children[j]->Name, MassOfRoots[k]->Name))
+				{
+					MassOfRoots[k] = NewNode;//подумать над этим
+				}				
+			}
+		}
+		MassOfNodes[i] = NewNode;
+	}
+	for (int i = 0; i < search->counter; ++i)
+	{
+		printf("%s: ", MassOfNodes[i]->Name);
+		for (int j = 0; j < MassOfNodes[i]->AmountOfChildren; ++j )
+		{
+			printf("%s", MassOfNodes[i]->children[j]->Name);
+			if (j != MassOfNodes[i]->AmountOfChildren - 1)
+				printf(",");
+		}
+		printf("\n");
+	}
 }
