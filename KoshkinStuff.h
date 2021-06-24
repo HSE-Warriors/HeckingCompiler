@@ -44,7 +44,18 @@ int posOfWhitespace = 0;
 char nameOfFileToReOpen[256];
 char compareString[99];
 int seen = 0; //почти не костыль
-int keysForVariables[999][4] = { -1, -1, -1, -1 }; //[номер строки][PascalStyle][correctName][selfdefined][used][type] //0 - перед main, 1 - в конце файла, 3 - в другом файле
+//int keysForVariables[999][4] = { -1, -1, -1, -1 }; //[номер строки][PascalStyle][correctName][selfdefined][used][type] //0 - перед main, 1 - в конце файла, 3 - в другом файле
+
+typedef struct nodes
+{
+	char Name[50];
+	struct nodes* children[10];
+	char BanListForBFS_DFS[10][50];
+	struct nodes* parent;
+	int AmountOfChildren;
+	int AmountOfBan;
+	int Visited_flag;
+}NODES;
 
 int flag_E = 0; //кол-во успешно открытых файлов
 int flag_F = 0; //показывалась ли директори€ с файлами

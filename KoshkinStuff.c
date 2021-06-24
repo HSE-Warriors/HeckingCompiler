@@ -176,7 +176,7 @@ void countThings(char givenString[])
 	{
 		printf("\x1b[35;1m > Is variable? \n\x1b[0m");
 	}
-	if (strstr(givenString, ";") && !strstr(givenString, "(") && !strstr(givenString, ")") && (strstr(givenString, "int") || strstr(givenString, "long int") || strstr(givenString, "short int") || strstr(givenString, "long long int") || strstr(givenString, "unsigned int") || strstr(givenString, "long") || strstr(givenString, "long long") || strstr(givenString, "unsigned long") || strstr(givenString, "unsigned short") || strstr(givenString, "unsigned long long") || strstr(givenString, "float") || strstr(givenString, "double") || strstr(givenString, "lonng double") || strstr(givenString, "char") || strstr(givenString, "signed char") || strstr(givenString, "unsigned char") || strstr(givenString, "string")) && (!strstr(givenString, "printf") || !strstr(givenString, "// int") || !strstr(givenString, "// char"))) //мда
+	if (strstr(givenString, ";") && !strstr(givenString, "(") && !strstr(givenString, ")") && (strstr(givenString, "int") || strstr(givenString, "long int") || strstr(givenString, "short int") || strstr(givenString, "long long int") || strstr(givenString, "unsigned int") || strstr(givenString, "long") || strstr(givenString, "long long") || strstr(givenString, "unsigned long") || strstr(givenString, "unsigned short") || strstr(givenString, "unsigned long long") || strstr(givenString, "float") || strstr(givenString, "double") || strstr(givenString, "lonng double") || strstr(givenString, "char") || strstr(givenString, "signed char") || strstr(givenString, "unsigned char")) && (!strstr(givenString, "printf") || !strstr(givenString, "// int") || !strstr(givenString, "// char" || !strstr(givenString, "// double" || !strstr(givenString, "// float"))) //мда
 	{
 		if (flag_D == 1)
 		{
@@ -332,7 +332,7 @@ void countThings(char givenString[])
 	{
 		int temp = countOfFunctions;
 		//was seen?
-		/*getName(givenString, 1, 4, 0);//0 - var, 1 - f(); 0 - regular, 1 - misspelled, 2 - unused, 3 - empty/selfdef
+		getName(givenString, 1, 4, 0);//0 - var, 1 - f(); 0 - regular, 1 - misspelled, 2 - unused, 3 - empty/selfdef
 		for (int i = 0; i < countOfFunctions; i++)
 		{
 			if (strstr(namesOfFunctions[i], compareString))
@@ -344,9 +344,9 @@ void countThings(char givenString[])
 		if (seen != 1)
 		{
 			countOfFunctions++;
-		}*/
-		//AmountOfFunctions++;
-		//keysForFunctions[countOfFunctions - 1]++; //seen
+		}
+		AmountOfFunctions++;
+		keysForFunctions[countOfFunctions - 1]++; //seen
 		if (flag_D == 1)
 		{
 			printf("\x1b[35;1m \t> \x1b[32;1mYes.\n\x1b[0m");
