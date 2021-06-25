@@ -181,4 +181,14 @@ int main()
 		}
 		printf("\n");
 	}
+	////Find Recursive Fucntions////
+	char ListAlreadyPrinted[50][50] = { 0 };
+	int CountList = 0;
+	printf("\nRecursive functions:\n");
+	for (int i = 0; i < CountRoots; ++i)
+	{
+		DFS(MassOfRoots[i], NULL, ListAlreadyPrinted, &CountList);
+		CleanFlags(MassOfRoots[i]);
+	}
+	return 0;
 }

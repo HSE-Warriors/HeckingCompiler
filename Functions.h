@@ -26,5 +26,6 @@ NODE* PopFromQ(QUEUE* mas);
 NODE* AddNode(NODE* node, char name[], NODE* MassOfRoots[], int Count, char Cycled[][25], int *CycledCount);
 NODE* AddChild(NODE* node, NODE* child);
 NODE* BFS(char* NameOfFunc, NODE* node, int FlagIgnoreBan);
+void DFS(NODE* node, NODE* PastNode, char List [][50], int *CountList);
 void CleanFlags(NODE* node);
 int ThisIsNotDescendant(NODE* node, char name[]);

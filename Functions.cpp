@@ -156,26 +156,39 @@ void CleanFlags(NODE* node)
 		}
 	}
 }
-//void CreateCallFunctionGraph(char* MassiveOfFunctions[][SIZE], FILE* MassiveOfFiles[][SIZE], int AmountOfFiles)
-//{
-//	FILE* FileName = fopen("New_File.ccp", "r");
-//	char str[200] = { 0 };
-//	char FuncName[SIZE] = { 0 };
-//	while (1)
-//	{
-//		fgets(str,200,FileName);
-//		if (!strcmp(str, "\n\0")) { break; }
-//	}
-//	fgets(str, 200, FileName);
-//	int counter = 0;
-//	while (str[counter] != ' ') ++counter;
-//	++counter;
-//	if (str[counter] >= 65 && str[counter] <= 90)//встретили функцию
-//	{
-//		int counter1 = 0;
-//		while (0)
-//		{
-//
-//		}
-//	}
-//}
+int NotInList(char Name[], char List[][50], int Count)
+{
+	for (int i = 0; i < Count; ++i)
+	{
+		if (!strcmp(Name, List[i]))
+			return 0;
+	}
+	return 1;
+}
+void DFS(NODE* node, NODE* PastNode, char List [][50], int *CountList)
+{
+	if (node->Visited_flag == 1)
+	{
+		NODE* temp = PastNode;
+		while (temp->parent != NULL)
+		{
+			if (NotInList(temp->Name, List, *CountList))
+				printf("%s\n", temp->Name);
+				strcpy(List[*CountList], temp->Name);
+				++* CountList;
+			temp = temp->parent;
+		}
+		if (NotInList(temp->Name, List, *CountList))
+			printf("%s\n\n", temp->Name);
+			strcpy(List[*CountList], temp->Name);
+			++* CountList;
+	}
+	else
+	{
+		node->Visited_flag = 1;
+		for (int i = 0; i < node->AmountOfChildren; ++i)
+		{
+			DFS(node->children[i], node, List, CountList);
+		}
+	}
+}
