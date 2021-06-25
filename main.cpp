@@ -22,7 +22,7 @@ int main()
 	//Функции Лёши
 
 	//Функции Саши
-	//KoshkinDoStuff();
+	KoshkinDoStuff();
 
 	//Функции Дена
 
