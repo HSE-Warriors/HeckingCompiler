@@ -27,7 +27,23 @@ char* DeleteSpaces(char stroka[])
 	}
 	return str;
 }
-//
+char* DeleteComment(char string[])
+{
+	if (strchr(string, '/'))
+	{
+		int slash = strchr(string, '/') - string;
+		if (string[slash + 1] == '/')
+		{
+			int j = slash + 2;
+			int len = strlen(string);
+			for (int i = j; i < len; ++i)
+			{
+				string[i] = 0;
+			}
+		}
+	}
+	return string;
+}
 void FullBodyOfCycle(char Files[], int StringCounter, char MassiveBody[][200], int* AmountOfStrings)
 {
 	int CounterOfBracket = 0;
@@ -49,7 +65,36 @@ void FullBodyOfCycle(char Files[], int StringCounter, char MassiveBody[][200], i
 	}
 	return;
 }
-//
+int CheckValue(char mas[])
+{
+	int i = 0;
+	while (mas[i] != '=')
+	{
+		++i;
+	}
+	++i;
+	while (mas[i] == ' ')
+	{
+		++i;
+	}
+	if (strstr(mas, "char"))
+	{
+		if (mas[i] == 48)
+			return 0;
+		else
+			return 1;
+	}
+	else
+	{
+		while (mas[i] != ' ' && mas[i] != ';')
+		{
+			if (!(mas[i] == '-' || mas[i] == '0' || mas[i] == '.'))
+				return 1;
+			++i;
+		}
+		return 0;
+	}
+}
 int FindInitVar(char name[], char Files[][20], int counter)
 {
 	for (int i = 0; i < counter; ++i)
@@ -124,7 +169,41 @@ int FindChangesOfVarInCycle(char file[], int string, char var[])
 	}
 	return 0;
 }
-//
+int FindValueOfNumber(char MassNumber[], int* fract)
+{
+	int i = 0;
+	int FlagNegative = 0;
+	int FlagDouble = 0;
+	int number = 0;
+	if (MassNumber[0] == '-')
+	{
+		++i;
+		FlagNegative = 1;
+	}
+	number += MassNumber[i] - 48;
+	++i;
+	for (int j = i; j < strlen(MassNumber); ++j)
+	{
+		if (MassNumber[j] == '.' || FlagDouble)
+		{
+			if (FlagDouble)
+			{
+				*fract *= 10;
+				*fract += MassNumber[j] - 48;
+			}
+			else
+				FlagDouble = 1;
+		}
+		else
+		{
+			number *= 10;
+			number += MassNumber[j] - 48;
+		}
+	}
+	if (FlagNegative)
+		number *= -1;
+	return number;
+}
 int FindInitialValueOfVar(char VarName[], char Files[][20], int counter, int* fract)
 {
 	char Bufferes[200] = { 0 };

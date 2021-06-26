@@ -129,7 +129,98 @@ int main()
 										}
 									}
 								}
-								//
+								else
+								{
+									if (!(strchr(WhileBody, '=')))
+									{
+										if (!((WhileBody[0] == '-') || (WhileBody[0] >= 48 && WhileBody[0] <= 57)))
+										{
+											int i = 0;
+											int j = 0;
+											int FractionalPart = 0;
+											char BuffVarOrNumber[15] = { 0 };
+											if (strchr(WhileBody, '>'))
+												i = strchr(WhileBody, '>') - WhileBody;
+											if (strchr(WhileBody, '<'))
+												i = strchr(WhileBody, '<') - WhileBody;
+											int Limit = i - 1;
+											while (WhileBody[Limit - 1] == ' ')
+												--Limit;
+											if (WhileBody[i] == '=')
+												++i;
+											for (int k = 0; k < Limit; ++k)
+											{
+												BuffVarOrNumber[j] = WhileBody[k];
+												++j;
+											}
+											char VarName[50] = { 0 };
+											strcpy(VarName, BuffVarOrNumber);
+											int ValueOfVar = FindInitialValueOfVar(BuffVarOrNumber, Files, AmountOfFiles, &FractionalPart);
+											int FractPartVar = FractionalPart;
+											FractionalPart = 0;
+											j = 0;
+											for (int n = 0; n < 15; ++n)
+												BuffVarOrNumber[n] = 0;
+											++i;
+											while (WhileBody[i] == ' ')
+												++i;
+											while (i < strlen(WhileBody))
+											{
+												BuffVarOrNumber[j] = WhileBody[i];
+												++i;
+												++j;
+											}
+											int ValueOfNumber = FindValueOfNumber(BuffVarOrNumber, &FractionalPart);
+											if (strchr(WhileBody, '>'))
+											{
+												FlagMoreOrLess = 1; // 1 - больше
+												if (strstr(WhileBody, ">="))
+												{
+													if (ValueOfVar >= ValueOfNumber)
+														Number_Different_Types = 6;
+													else
+													{
+														if (ValueOfVar == ValueOfNumber && FractPartVar >= FractionalPart)
+															Number_Different_Types = 6;
+													}
+												}
+												else 
+													if (ValueOfVar > ValueOfNumber)
+														Number_Different_Types = 6;
+													else
+													{
+														if (ValueOfVar == ValueOfNumber && FractPartVar > FractionalPart)
+															Number_Different_Types = 6;
+													}
+											}
+											else
+											{
+												FlagMoreOrLess = 2; // 2 - меньше
+												if (strstr(WhileBody, "<="))
+												{
+													if (ValueOfVar <= ValueOfNumber)
+														Number_Different_Types = 6;
+													else
+													{
+														if (ValueOfVar == ValueOfNumber && FractPartVar <= FractionalPart)
+															Number_Different_Types = 6;
+													}
+												}
+												else
+												{
+													if (ValueOfVar < ValueOfNumber)
+														Number_Different_Types = 6;
+													else
+													{
+														if (ValueOfVar == ValueOfNumber && FractPartVar < FractionalPart)
+															Number_Different_Types = 6;
+													}
+												}
+											}
+											strcpy(WhileBody, VarName);
+										}
+									}
+								}
 							}
 						}
 					}
@@ -247,6 +338,20 @@ int main()
 						if (TempLevel == 3)
 							Level_Of_Cycling = 3;
 						break;
+					case 3: //переменная из условия while, на момент иницилизации == 0
+						TempLevel = FindChangesOfVarInCycle(Files[v], StringCounter, WhileBody);
+						if (TempLevel)
+							Level_Of_Cycling = 0;
+						else
+							Level_Of_Cycling = 3;
+						break;
+					case 4: //рандомайзер над переменной, не выполняются оба условия
+						Level_Of_Cycling = 2;
+						/*TempLevel = FindIfWithBreak(Files[v], StringCounter, 1, Files[v], &v);
+						if (TempLevel == 3)
+							Level_Of_Cycling = 3;*/
+						break;
+						//
 					default:
 						break;
 					}

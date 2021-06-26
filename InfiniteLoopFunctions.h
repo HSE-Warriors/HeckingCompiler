@@ -7,13 +7,13 @@
 #include <math.h>
 
 char* DeleteSpaces(char stroka[]);
-//
+char* DeleteComment(char string[]);
 void FullBodyOfCycle(char Files[], int StringCounter, char MassiveBody[][200], int* AmountOfStrings);
-//
+int CheckValue(char mas[]);
 int FindInitVar(char name[], char Files[][20], int counter);
 int CheckBreak(char file[], int string);
 int FindChangesOfVarInCycle(char file[], int string, char var[]);
-//
+int FindValueOfNumber(char MassNumber[], int* fract);
 int FindInitialValueOfVar(char VarName[], char Files[][20], int counter, int* fract);
 int CheckChangesOfVarAndTheirDirection(char file[], int string, char VarName[], int FlagMoreOrLess);
 ////2
