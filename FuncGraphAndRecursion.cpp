@@ -49,6 +49,22 @@ int main()
 	NODE* MassOfNodes[50] = { 0 };
 	
 	COORD* search = Init();
+
+	strcpy(Files[0], "Source.cpp");
+	strcpy(Files[1], "Source1.cpp");
+	strcpy(Files[2], "Header.h");
+	strcpy(Files[3], "Source2.cpp");
+	AmountOfFiles = 4;
+	strcpy(search->NameOfFunction[0], "func0");
+	strcpy(search->NameOfFunction[1], "func1");
+	strcpy(search->NameOfFunction[2], "func2");
+	strcpy(search->NameOfFunction[3], "func3");
+	strcpy(search->NameOfFunction[4], "func4");
+	strcpy(search->NameOfFunction[5], "func5");
+	strcpy(search->NameOfFunction[6], "func6");
+	search->counter = 7;
+	CounterEmpty = 7;
+	AmountOfFunctions = 7;
 	
 	if (CounterEmpty)
 	{
@@ -88,7 +104,7 @@ int main()
 			}
 		}
 	}
-	
+
 	for (int i = 0; i < search->counter; ++i)
 	{
 		char Cycled[50][25] = { 0 };
@@ -136,8 +152,6 @@ int main()
 					{
 						search->FlagOfIncludingInTree[j] = 1;
 						NewNode = AddNode(NewNode, search->NameOfFunction[j], MassOfRoots, CountRoots, Cycled, &CycledCount);
-						if (NewNode == NULL)
-							break;
 					}
 					else
 					{
@@ -158,13 +172,21 @@ int main()
 		}
 		for (int j = 0; j < NewNode->AmountOfChildren; ++j)
 		{
+			if (ThisIsNotDescendant(NewNode, NewNode->children[j]->Name))
+			{
+				NewNode->children[j]->parent = NewNode;
+			}
+			else
+			{
 				strcpy(NewNode->BanListForBFS_DFS[NewNode->AmountOfBan], NewNode->children[j]->Name);
 				++NewNode->AmountOfBan;
+			}
 			for (int k = 0; k < CountRoots; ++k)
 			{
-				if (!strcmp(NewNode->children[j]->Name, MassOfRoots[k]->Name))
+				int flag = ThisIsNotDescendant(NewNode, MassOfRoots[k]->Name);
+				if (!strcmp(NewNode->children[j]->Name, MassOfRoots[k]->Name) && flag)
 				{
-					MassOfRoots[k] = NewNode;//РїРѕРґСѓРјР°С‚СЊ РЅР°Рґ СЌС‚РёРј
+					MassOfRoots[k] = NewNode;//подумать над этим
 				}				
 			}
 		}
@@ -181,6 +203,7 @@ int main()
 		}
 		printf("\n");
 	}
+
 	////Find Recursive Fucntions////
 	char ListAlreadyPrinted[50][50] = { 0 };
 	int CountList = 0;
@@ -191,4 +214,5 @@ int main()
 		CleanFlags(MassOfRoots[i]);
 	}
 	return 0;
+	
 }
