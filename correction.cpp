@@ -1819,6 +1819,11 @@ void str_correction(FILE* out, char buf[])
 		buf[j] = '\0';
 }
 
+void union_correction(char buf[], char com[])
+{
+	printf("You're cool if you're reading this");
+}
+
 void return_correction(FILE* out, char buf[])
 {
 	int i = 0, j = 0;
