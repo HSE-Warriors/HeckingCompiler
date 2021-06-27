@@ -95,7 +95,7 @@ int CheckValue(char mas[])
 		return 0;
 	}
 }
-int FindInitVar(char name[], char Files[][20], int counter)
+int FindInitVar(char name[], char Files[][40], int counter)
 {
 	for (int i = 0; i < counter; ++i)
 	{
@@ -204,7 +204,7 @@ int FindValueOfNumber(char MassNumber[], int* fract)
 		number *= -1;
 	return number;
 }
-int FindInitialValueOfVar(char VarName[], char Files[][20], int counter, int* fract)
+int FindInitialValueOfVar(char VarName[], char Files[][40], int counter, int* fract)
 {
 	char Bufferes[200] = { 0 };
 	for (int i = 0; i < counter; ++i)

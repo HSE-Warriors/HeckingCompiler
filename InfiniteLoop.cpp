@@ -1,4 +1,5 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+﻿#pragma warning(disable : 4996)
+#define _CRT_SECURE_NO_WARNINGS
 #define MAXSIZE 20
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,14 +7,11 @@
 #include <math.h>
 #include "InfiniteLoopFunctions.h"
 
-int main()
+void InfiniteLoop(char Files[][40], int AmountOfFiles, char InfiniteLoopSrtings[][100], int *AmountOfInfiniteMessages)
 {
 	char FORpossibleInfiniteLoopVariants[17][20] = { "for(;;)","for( ;;)","for(; ;)","for(;; )","for( ; ;)","for(; ; )","for( ;; )","for( ; ; )",
 	"for (;;)","for ( ;;)","for (; ;)","for (;; )","for ( ; ;)","for (; ; )","for ( ;; )","for ( ; ; )","for  (;;)" };
-	char Files[50][20] = { 0 };
-	int AmountOfFiles = 1;//
 	char Buffers[200] = { 0 };
-	strcpy(Files[0],"Cycle.cpp");//
 	int FlagMoreOrLess = 0;
 	char InsideBrackets[20] = { 0 };
 	char WhileBody[30] = { 0 };
@@ -29,7 +27,7 @@ int main()
 			r = fopen(Files[v], "r");
 			while (!feof(r))
 			{
-				int Level_Of_Cycling = 0;
+				int Level_Of_Cycling = 0; 
 				int Number_Different_Types = 0;
 				int FlagInit = 0;
 				++StringCounter;
@@ -451,21 +449,38 @@ int main()
 						break;
 					}
 				}
+				char BuffersString[200] = { 0 };
+				char BuffNumber[10] = { 0 };
 				switch (Level_Of_Cycling)
 				{
 				case 0:
 					break;
 				case 1:
-					printf("There is infinite loop starting with a string %d -- 1\n", StringCounter);
-					printf("NDT - %d\n", Number_Different_Types);
+					strcpy(BuffersString, "There is infinite loop starting with a string ");
+					itoa(StringCounter, BuffNumber, 10);
+					strncat(BuffersString, BuffNumber, 4);
+					strncat(BuffersString, " in file ", 9);
+					strncat(BuffersString, Files[v], 30);
+					strcpy(InfiniteLoopSrtings[*AmountOfInfiniteMessages], BuffersString);
+					++*AmountOfInfiniteMessages;
 					break;
 				case 2:
-					printf("There is possible infinite loop starting with a string %d -- 2\n", StringCounter);
-					printf("NDT - %d\n", Number_Different_Types);
+					strcpy(BuffersString, "There is possible infinite loop starting with a string ");
+					itoa(StringCounter, BuffNumber, 10);
+					strncat(BuffersString, BuffNumber, 4);
+					strncat(BuffersString, " in file ", 9);
+					strncat(BuffersString, Files[v], 30);
+					strcpy(InfiniteLoopSrtings[*AmountOfInfiniteMessages], BuffersString);
+					++* AmountOfInfiniteMessages;
 					break;
 				case 3:
-					printf("Cycle in the string %d may be an infinite loop -- 3\n", StringCounter);
-					printf("NDT - %d\n", Number_Different_Types);
+					strcpy(BuffersString, "There is possibility to be infinite for loop starting with a string ");
+					itoa(StringCounter, BuffNumber, 10);
+					strncat(BuffersString, BuffNumber, 4);
+					strncat(BuffersString, " in file ", 9);
+					strncat(BuffersString, Files[v], 30);
+					strcpy(InfiniteLoopSrtings[*AmountOfInfiniteMessages], BuffersString);
+					++* AmountOfInfiniteMessages;
 					break;
 				}
 			}
