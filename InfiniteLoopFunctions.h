@@ -16,9 +16,10 @@ int FindChangesOfVarInCycle(char file[], int string, char var[]);
 int FindValueOfNumber(char MassNumber[], int* fract);
 int FindInitialValueOfVar(char VarName[], char Files[][20], int counter, int* fract);
 int CheckChangesOfVarAndTheirDirection(char file[], int string, char VarName[], int FlagMoreOrLess);
-////2
+int FindScanfGetchar(char Files[], int Counter, char VarName[]);
+void AddFractPart(float* MainPart, float FractPart);
 int CalculateMinMaxOfRand(int* MinBorderOfDiapozone, int* MaxBorderOfDiapozone, char temp[], int l);
 int FindIfWithBreak(char Files[], int Counter, int StateOfWork, char VarName[], int* FractPart);
-//2
+int FindRand(char Files[], int Counter, char VarName[], int* FractRand, int* MinBorderOfDiapozone, int* MaxBorderOfDiapozone);
 
 

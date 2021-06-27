@@ -333,7 +333,79 @@ int FindScanfGetchar(char Files[], int Counter, char VarName[])
 	}
 	return 0;
 }
-////2
+void AddFractPart(float* MainPart, float FractPart)
+{
+	int counter = 0;
+	int c = FractPart;
+	while (c)
+	{
+		++counter;
+		c /= 10;
+	}
+	FractPart /= pow(10, counter);
+	*MainPart += FractPart;
+	return;
+}
+int CalculateMinMaxOfRand(int* MinBorderOfDiapozone, int* MaxBorderOfDiapozone, char temp[], int l)
+{
+	int i = 0;
+	int FlagNegNumber = 0;
+	while (i < l)
+	{
+		int TempNumber = 0;
+		if (temp[i] == '%' || temp[i] == '+' || temp[i] == '-')
+		{
+			char Operator = temp[i];
+			++i;
+			while (temp[i] == ' ')
+				++i;
+			if (i >= l)
+				break;
+			while (temp[i] != ' ')
+			{
+				if (temp[i] == '-')
+				{
+					++FlagNegNumber;
+					break;
+				}
+				else
+				{
+					while (temp[i] != 32 && temp[i] != ';' && i < strlen(temp))
+					{
+						TempNumber *= 10;
+						TempNumber += temp[i] - 48;
+						++i;
+					}
+				}
+				if (FlagNegNumber)
+					break;
+				switch (Operator)
+				{
+				case '%':
+					if (*MaxBorderOfDiapozone > TempNumber)
+						*MaxBorderOfDiapozone = TempNumber;
+					*MinBorderOfDiapozone = 0;
+					break;
+				case '+':
+					*MinBorderOfDiapozone += TempNumber;
+					*MaxBorderOfDiapozone += TempNumber;
+					break;
+				case '-':
+					*MinBorderOfDiapozone -= TempNumber;
+					*MaxBorderOfDiapozone -= TempNumber;
+					break;
+				}
+				if (i >= l)
+					break;
+				TempNumber = 0;
+			}
+		}
+		++i;
+	}
+	if (FlagNegNumber)
+		return 0;
+	return 1;
+}
 int FindIfWithBreak(char Files[], int Counter, int StateOfWork, char VarName[], int* FractPart)
 {
 	int CounterOfBracket = 0;
@@ -422,4 +494,97 @@ int FindIfWithBreak(char Files[], int Counter, int StateOfWork, char VarName[], 
 	}
 	return 0;
 }
-//2
+int FindRand(char Files[], int Counter, char VarName[], int* FractRand, int* MinBorderOfDiapozone, int* MaxBorderOfDiapozone)
+{
+	int CounterOfBracket = 0;
+	int NumberOfAnswer = 0;
+	char MassiveBody[80][200] = { 0 };
+	int StringCounter = 0;
+	int Flag0 = 0;
+	int FlagIfBreak = 0;
+	FullBodyOfCycle(Files, Counter, MassiveBody, &StringCounter);
+	for (int j = 0; j < StringCounter; ++j)
+	{
+		if (strchr(MassiveBody[j], '{')) ++CounterOfBracket;
+		if (strchr(MassiveBody[j], '}')) --CounterOfBracket;
+		if (!CounterOfBracket)
+			break;
+		if (strstr(MassiveBody[j], VarName) && strchr(MassiveBody[j], '=') && strstr(MassiveBody[j], "rand") && CounterOfBracket == 1)
+		{
+			int IntValueRand = FindIfWithBreak(Files, Counter, 0, VarName, FractRand);
+			int k = 0;
+			for (int i = 0; i < strlen(MassiveBody[j]); ++i)
+			{
+				if (MassiveBody[j][i] == '(' || MassiveBody[j][i] == ')')
+					++k;
+			}
+			if (k > 2 || strchr(MassiveBody[j], '*') || strchr(MassiveBody[j], '/') || strchr(MassiveBody[j], '.'))
+				continue;
+			else
+			{
+				int l = 0;
+				int FlagOfNotEmptyBody = 0;
+				char temp[100] = { 0 };
+				k = strchr(MassiveBody[j], '(') - MassiveBody[j] + 1;
+				while (MassiveBody[j][k] != ')')
+				{
+					temp[l] = MassiveBody[j][k];
+					++l;
+					++k;
+				}
+				for (int i = 0; i < l; ++i)
+				{
+					if (temp[i] != 0)
+					{
+						FlagOfNotEmptyBody = 1;
+						break;
+					}
+				}
+				if (FlagOfNotEmptyBody)
+				{
+					if (!CalculateMinMaxOfRand(MinBorderOfDiapozone, MaxBorderOfDiapozone, temp, l))
+						continue;
+				}
+				int n = 0;
+				++k;
+				for (int b = 0; b < 100; ++b)
+					temp[b] = 0;
+				l = 0;
+				while (MassiveBody[j][k] != ';')
+				{
+					temp[l] = MassiveBody[j][k];
+					++l;
+					++k;
+				}
+				if (!CalculateMinMaxOfRand(MinBorderOfDiapozone, MaxBorderOfDiapozone, temp, l))
+					continue;
+				if (0 <= *MaxBorderOfDiapozone && 0 >= *MinBorderOfDiapozone)
+				{
+					if (!Flag0)
+					{
+						++NumberOfAnswer;
+						Flag0 = 1;
+					}
+				}
+				float MainValueRand = IntValueRand;
+				float FractValueRand = *FractRand;
+				if (FractRand)
+				{
+					AddFractPart(&MainValueRand, FractValueRand);
+				}
+				if (MainValueRand <= *MaxBorderOfDiapozone && MainValueRand >= *MinBorderOfDiapozone)
+				{
+					if (!FlagIfBreak)
+					{
+						++NumberOfAnswer;
+						FlagIfBreak = 1;
+					}
+				}
+			}
+		}
+	}
+	if (*MinBorderOfDiapozone == 0 && *MaxBorderOfDiapozone == RAND_MAX)
+		return 0;
+	else
+		return NumberOfAnswer;
+}

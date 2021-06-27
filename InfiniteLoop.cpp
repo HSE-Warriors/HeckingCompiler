@@ -300,7 +300,97 @@ int main()
 									Number_Different_Types = 1;
 							}
 						}
-						//
+						if (!Number_Different_Types && !FlagNotCheck)
+						{
+							int UpOrDown = 0; // == 0 -> --, == 1 -> ++
+							int Operator = 0; // '<' == 0, '>' == 1, '<=' or '>=' == 2
+							if ((strstr(buff2, "--")) || (strstr(buff2, "-=")) || ((strchr(buff2, '-')) && strchr(buff2, '=')) || (strstr(buff2, "/ ")))
+								UpOrDown = 0;
+							if ((strstr(buff2, "++")) || (strstr(buff2, "+=")) || ((strchr(buff2, '+')) && strchr(buff2, '=')) || (strstr(buff2, "* ")))
+								UpOrDown = 1;
+							if (strchr(buff, '>'))
+								Operator = 0;
+							if (strstr(buff, ">="))
+								Operator = 1;
+							if (strchr(buff, '<'))
+								Operator = 2;
+							if (strstr(buff, "<="))
+								Operator = 3;
+							char Body[100] = { 0 };
+							int l = 0;
+							j = 0;
+							while (Buffers[j] != '(')
+							{
+								++j;
+							}
+							++j;
+							while (Buffers[j] != ')')
+							{
+								Body[l] = Buffers[j];
+								++j;
+								++l;
+							}
+							char FirstNumber[20] = { 0 };
+							char SecondNumber[20] = { 0 };
+							int CounterNumber = 0;
+							int i = 0;
+							while (i < strlen(Body))
+							{
+								if (!FirstNumber[0] && (Body[i] == '-' || (Body[i] >= 48 && Body[i] <= 57)))
+								{
+									while ((Body[i] >= 48 && Body[i] <= 57) || Body[i] == '.' || Body[i] == '-')
+									{
+										FirstNumber[CounterNumber] = Body[i];
+										++i;
+										++CounterNumber;
+									}
+									CounterNumber = 0;
+								}
+								if (FirstNumber[0] && (Body[i] == '-' || (Body[i] >= 48 && Body[i] <= 57)))
+								{
+									while ((Body[i] >= 48 && Body[i] <= 57) || Body[i] == '.' || Body[i] == '-')
+									{
+										SecondNumber[CounterNumber] = Body[i];
+										++i;
+										++CounterNumber;
+									}
+									CounterNumber = 0;
+									break;
+								}
+								++i;
+							}
+							int Fract = 0;
+							int FirstNumb = FindValueOfNumber(FirstNumber, &Fract);
+							float FirstNumbF = FirstNumb;
+							AddFractPart(&FirstNumbF, Fract);
+							Fract = 0;
+							int SecondNumb = FindValueOfNumber(SecondNumber, &Fract);
+							float SecondNumbF = SecondNumb;
+							AddFractPart(&SecondNumbF, Fract);
+
+							int FlagMoreLessEqual = 0; // '==' -> 0, '<' -> 1, '>' -> 2
+							if (FirstNumbF == SecondNumbF)
+								FlagMoreLessEqual = 0;
+							else
+							{
+								if (FirstNumbF < SecondNumbF)
+									FlagMoreLessEqual = 1;
+								else
+									FlagMoreLessEqual = 2;
+							}
+							//если внутри есть условие на повышение/понижение, а цикл увеличения переменной в ней идет вниз/вверх соотвественно или for(int i=0;i>=0;i++)
+							if (!FlagMoreOrLess)
+							{
+								if (Operator == 1 && UpOrDown)
+									Number_Different_Types = 1;
+								if (Operator == 3 && !UpOrDown)
+									Number_Different_Types = 1;
+							}
+							if (FlagMoreLessEqual == 2 && Operator <= 1 && UpOrDown)
+								Number_Different_Types = 1;
+							if (FlagMoreLessEqual == 1 && Operator >= 2  && !UpOrDown)
+								Number_Different_Types = 1;
+						}
 					}
 				}
 				if (Number_Different_Types)
@@ -351,7 +441,12 @@ int main()
 						if (TempLevel == 3)
 							Level_Of_Cycling = 3;*/
 						break;
-						//
+					case 5: //рандомайзер над переменной, выполняется только 1 из условий ИЛИ не изменение переменной из случая while(i >(<) 2) и в больш, и в меньш. стороны
+						Level_Of_Cycling = 3;
+						break;
+					case 6: //изменения переменной из случая while(i >(<) 2) в меньш. и больш. сторону соотвественно
+						Level_Of_Cycling = CheckChangesOfVarAndTheirDirection(Files[v], StringCounter, WhileBody, FlagMoreOrLess);
+						break;
 					default:
 						break;
 					}
