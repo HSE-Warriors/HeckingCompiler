@@ -18,6 +18,7 @@ int CountRoots = 0;
 int main()
 {
 	//Функции Лёши
+	main_correction(Files, &AmountOfFiles);
 
 	//Функции Саши
 
