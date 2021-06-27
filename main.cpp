@@ -11,6 +11,7 @@ char Functions[50][50] = { 0 }; int AmountOfFunctions = 0; //Для Саши, ч
 int main()
 {
 	//Функции Лёши
+	main_correction(Files, &AmountOfFiles);
 
 	//Функции Саши
 
