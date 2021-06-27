@@ -18,6 +18,14 @@ int check_type(char buf[], char type[50][40], int cnt)
 	return 1;
 }
 
+int chek_dirs(char buf[], char type[50][40], int cnt)
+{
+	for (int i = 0; i < cnt; ++i)
+		if (!(strcmp(buf, &type[i][4])))
+			return 0;
+	return 1;
+}
+
 int str_fit(FILE* in, FILE* out, NODEE* com, char buf[], char type[][40], int cnt_types, int* cnt_tabs, int* chek, NODEE* stack)
 {
 	char tmp;
@@ -376,4 +384,368 @@ int str_fit(FILE* in, FILE* out, NODEE* com, char buf[], char type[][40], int cn
 			buf[++i] = '\0';
 		return 15;
 	}
+}
+
+void dir_correction(FILE* out, char buf[], char dir[50][40], int* cnt_dir)
+{
+	int i = 1, j = 0;
+
+	char file[200];
+	char* old_file = &file[4];
+	char com[200];
+
+	com[0] = '\0';
+
+	small_com_correction(buf, com);
+
+	fprintf(out, "%c", buf[0]);
+
+	while (buf[i] == ' ' || buf[i] == '\t')
+		++i;
+
+	if (buf[i + 2] == 'd')
+	{
+		for (j = 0; j < i; ++j)
+			buf[j] = '\0';
+		return;
+	}
+
+	if (buf[i + 1] == 'n')
+	{
+		while (buf[i] >= 'A' && buf[i] <= 'z')
+			fprintf(out, "%c", buf[i++]);
+
+		fprintf(out, " ");
+
+		while (buf[i] == ' ' || buf[i] == '\t')
+			++i;
+
+		if (buf[i] == '\"')
+		{
+			strcpy(file, "New_");
+
+			j = 4;
+
+			fprintf(out, "%c", buf[i]);
+			++i;
+
+			while (buf[i] == ' ' || buf[i] == '\t')
+				++i;
+
+			while ((buf[i] >= 'A' && buf[i] <= 'z') || buf[i] == '.' || (buf[i] >= '0' && buf[i] <= '9'))
+			{
+				file[j++] = buf[i];
+				fprintf(out, "%c", buf[i++]);
+
+				while (buf[i] == ' ' || buf[i] == '\t')
+					++i;
+			}
+			file[j] = '\0';
+
+			if (chek_dirs(old_file, dir, *cnt_dir - 1))
+			{
+				strcpy(dir[*cnt_dir], file);
+				old_file = &file[j - 1];
+				strcpy(old_file, "cpp\0");
+				strcpy(dir[*cnt_dir + 1], file);
+				*cnt_dir += 2;
+			}
+
+			while (buf[i] == ' ' || buf[i] == '\t')
+				++i;
+
+			fprintf(out, "%c", buf[i]);
+		}
+		else
+		{
+			fprintf(out, "%c", buf[i++]);
+
+			while (buf[i] == ' ' || buf[i] == '\t')
+				++i;
+
+			while ((buf[i] >= 'A' && buf[i] <= 'z') || buf[i] == '.')
+			{
+				fprintf(out, "%c", buf[i++]);
+
+				while (buf[i] == ' ' || buf[i] == '\t')
+					++i;
+			}
+
+			fprintf(out, ">");
+		}
+	}
+	else if (buf[i] == 'p')
+	{
+		while (buf[i] >= 'A' && buf[i] <= 'z')
+			fprintf(out, "%c", buf[i++]);
+
+		while (buf[i] == ' ' || buf[i] == '\t')
+			++i;
+
+		fprintf(out, " ");
+
+		while (buf[i] >= 'A' && buf[i] <= 'z')
+			fprintf(out, "%c", buf[i++]);
+	}
+	else
+	{
+		while (buf[i] != ' ' && buf[i] != '\t')
+			fprintf(out, "%c", buf[i++]);
+
+		fprintf(out, " ");
+
+		while (buf[i] == ' ' || buf[i] == '\t' || buf[i] == '\n')
+			++i;
+
+		while ((buf[i] >= 'A' && buf[i] <= 'z') || buf[i] == '.')
+			fprintf(out, "%c", buf[i++]);
+
+		while (buf[i] == ' ' || buf[i] == '\t' || buf[i] == '\n')
+			++i;
+
+		if (buf[i] != '\0')
+			fprintf(out, " ");
+
+		while ((buf[i] >= 'A' && buf[i] <= 'z') || buf[i] == '.' || (buf[i] >= '0' && buf[i] <= '9'))
+			fprintf(out, "%c", buf[i++]);
+	}
+
+	if (com[0] != '\0')
+		fprintf(out, " // %s", com);
+
+	fprintf(out, "\n");
+
+	for (j = 0; j < i; ++j)
+		buf[j] = '\0';
+}
+
+void struct_correction(FILE* out, char buf[], char type[50][40], int cnt_types)
+{
+	int i = 0, j = 0;
+
+	char com[200];
+
+	com[0] = '\0';
+
+	small_com_correction(buf, com);
+
+	while (buf[i] == ' ' || buf[i] == '\t' || buf[i] == '\n')
+		++i;
+
+	if (buf[i] == 't')
+	{
+		while (buf[i] != ' ' && buf[i] != '\t' && buf[i] != '\n')
+			fprintf(out, "%c", buf[i++]);
+
+		fprintf(out, " ");
+
+		while (buf[i] == ' ' || buf[i] == '\t' || buf[i] == '\n')
+			++i;
+	}
+
+	while (buf[i] != ' ' && buf[i] != '\t' && buf[i] != '\n')
+		fprintf(out, "%c", buf[i++]);
+
+	fprintf(out, " ");
+
+	while (buf[i] == ' ' || buf[i] == '\t' || buf[i] == '\n')
+		++i;
+
+	while (buf[i] != ' ' && buf[i] != '\t' && buf[i] != '\n')
+	{
+		type[cnt_types][j++] = buf[i];
+		fprintf(out, "%c", buf[i++]);
+	}
+	type[cnt_types][j] = '\0';
+
+	if (com[0] != '\0')
+		fprintf(out, " // %s", com);
+
+	fprintf(out, "\n");
+
+	for (j = 0; j < i; ++j)
+		buf[j] = '\0';
+}
+
+void func_correction(FILE* out, char buf[])
+{
+	int i = 0, j = 0;
+
+	char com[200];
+
+	com[0] = '\0';
+
+	small_com_correction(buf, com);
+
+	while (buf[i] == '\n' || buf[i] == ' ' || buf[i] == '\t')
+		++i;
+
+	while (buf[i] != '\n' && buf[i] != ' ' && buf[i] != '\t')
+		fprintf(out, "%c", buf[i++]);
+
+	while (buf[i] == '\n' || buf[i] == ' ' || buf[i] == '\t')
+		++i;
+
+	fprintf(out, " ", buf[i]);
+
+	while (buf[i] != '\n' && buf[i] != ' ' && buf[i] != '\t' && buf[i] != '(')
+		fprintf(out, "%c", buf[i++]);
+
+	while (buf[i] != '(')
+		++i;
+
+	fprintf(out, "(", buf[i++]);
+	++j;
+
+	while (1)
+	{
+		while (buf[i] == '\n' || buf[i] == ' ' || buf[i] == '\t')
+			++i;
+
+		if (buf[i] == ')')
+		{
+			fprintf(out, "%c", buf[i++]);
+			break;
+		}
+
+		while (buf[i] != '\n' && buf[i] != ' ' && buf[i] != '\t' && buf[i] != ')')
+			fprintf(out, "%c", buf[i++]);
+
+		while (buf[i] == '\n' || buf[i] == ' ' || buf[i] == '\t')
+			++i;
+
+		while ((buf[i] < 'A' || buf[i] > 'z') && buf[i] != ')')
+		{
+			fprintf(out, "%c", buf[i++]);
+
+			while (buf[i] == '\n' || buf[i] == ' ' || buf[i] == '\t')
+				++i;
+
+			++j;
+		}
+
+		if (j >= 0)
+		{
+			j = 0;
+			if(buf[i] != ')')
+				fprintf(out, " ");
+		}
+
+		while (buf[i] != '\n' && buf[i] != ' ' && buf[i] != '\t' && buf[i] != '[' && buf[i] != ',' && buf[i] != ')')
+			fprintf(out, "%c", buf[i++]);
+
+		if (buf[i] == '[')
+		{
+			fprintf(out, "[");
+
+			++i;
+			j = 1;
+			while (j != 0)
+			{
+				while (buf[i] == '\n' || buf[i] == ' ' || buf[i] == '\t')
+					++i;
+
+				while (buf[i] >= '0' && buf[i] <= '9')
+					fprintf(out, "%c", buf[i++]);
+
+				while (buf[i++] != ']');
+				--j;
+
+				fprintf(out, "]");
+
+				while (buf[i] == '\n' || buf[i] == ' ' || buf[i] == '\t')
+					++i;
+
+				if (buf[i] == '[')
+				{
+					fprintf(out, "[");
+					++j;
+					++i;
+				}
+			}
+		}
+
+		while (buf[i] == '\n' || buf[i] == ' ' || buf[i] == '\t')
+			++i;
+
+		if (buf[i] == ',')
+			fprintf(out, "%c ", buf[i++]);
+	}
+
+	while (buf[i] == '\n' || buf[i] == ' ' || buf[i] == '\t')
+		++i;
+
+	if (buf[i] == ';')
+		fprintf(out, ";", buf[i]);
+
+	if (com[0] != '\0')
+		fprintf(out, " // %s", com);
+
+	fprintf(out, "\n");
+
+	for (j = 0; j < i; ++j)
+		buf[j] = '\0';
+}
+
+void var_correction(FILE* out, char buf[])
+{
+	char str[200];
+	char chek[200];
+	int i = 0, j = 0, cnt_stars = 0, k = 0;
+
+	while (buf[i] == ' ' || buf[i] == '\t' || buf[i] == '\n')
+		++i;
+
+	while (buf[i] != ' ' && buf[i] != '\t' && buf[i] != '\n' && buf[i] != '*')
+	{
+		chek[k++] = buf[i];
+		fprintf(out, "%c", buf[i++]);
+	}
+
+	chek[k] = '\0';
+
+	if (!(strcmp(chek, "struct")) || !(strcmp(chek, "union")) || !(strcmp(chek, "enum")))
+	{
+		while (buf[i] == ' ' || buf[i] == '\t' || buf[i] == '\n')
+			++i;
+
+		while (buf[i] != ' ' && buf[i] != '\t' && buf[i] != '\n' && buf[i] != '*')
+			fprintf(out, "%c", buf[i++]);
+	}
+
+	while (buf[i] == ' ' || buf[i] == '\t' || buf[i] == '\n')
+		++i;
+
+	if (buf[i] == '*')
+	{
+		cnt_stars = 1;
+
+		while (1)
+		{
+			++i;
+			while (buf[i] == ' ' || buf[i] == '\t' || buf[i] == '\n')
+				++i;
+
+			if (buf[i] == '*')
+				++cnt_stars;
+
+			if ((buf[i] >= 'A' && buf[i] <= 'Z') || (buf[i] >= 'a' && buf[i] <= 'z') || (buf[i] >= '0' && buf[i] <= '9'))
+				break;
+		}
+
+		while (--cnt_stars >= 0)
+			fprintf(out, "*");
+	}
+
+	fprintf(out, " ");
+
+	while (buf[i] != ';')
+		str[j++] = buf[i++];
+
+	str[j++] = buf[i++];
+
+	str_correction(out, str);
+
+	for (j = 0; j < i; ++j)
+		buf[j] = '\0';
 }
