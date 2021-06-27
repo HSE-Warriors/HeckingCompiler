@@ -1,6 +1,15 @@
 #ifndef CORRECTION_H
 #define CORRECTION_H
 
+typedef struct nodee
+{
+	int type_flag;
+	struct nodee* next;
+} NODEE;
+
+void insert(NODEE** head, int flag);
+int del(NODEE** head);
+
 void put_tabs(FILE* out, int cnt_tabs);
 
 int str_fit(FILE* in, FILE* out, NODEE* com, char buf[], char type[50][40], int cnt_types, int* cnt_tabs, int* chek, NODEE* stack);
@@ -23,5 +32,17 @@ void small_com_correction(char buf[], char com[]);
 
 int check_type(char buf[], char type[50][40], int cnt_types);
 int chek_dirs(char buf[], char type[50][40], int cnt);
+
+void main_correction(char dirs[][40], int* cnt_d);
+
+void exitApp();
+
+void showHelp();
+
+void showFiles();
+
+void unluckee();
+
+void setColor2(int color);
 
 #endif

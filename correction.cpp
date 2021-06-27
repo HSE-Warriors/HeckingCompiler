@@ -4,6 +4,37 @@
 #include <string.h>
 #include "correction.h" 
 
+void insert(NODEE** head, int flag)
+{
+	NODEE* tmp = (NODEE*)malloc(sizeof(NODEE));
+	NODEE* new_next;
+
+	if (*head == NULL)
+	{
+		tmp->type_flag = flag;
+		tmp->next = NULL;
+		*head = tmp;
+	}
+	else
+	{
+		tmp->next = *head;
+		tmp->type_flag = flag;
+		*head = tmp;
+	}
+}
+
+int del(NODEE** head)
+{
+	int flag;
+	if (*head == NULL)
+		return -1;
+	NODEE* new_head = (*head)->next;
+	flag = (*head)->type_flag;
+	free(*head);
+	*head = new_head;
+	return flag;
+}
+
 void put_tabs(FILE* out, int cnt_tabs)
 {
 	for (int i = 0; i < cnt_tabs; ++i)
@@ -1882,4 +1913,382 @@ void after_do_correction(FILE* out, char buf[])
 
 	for (j = 0; j < 21; ++j)
 		buf[i] = '\0';
+}
+
+void main_correction(char dirs[50][40], int* cnt_d)
+{
+	NODEE* stack = NULL;
+	NODEE* comment = NULL;
+
+	char types[50][40];
+	char* main_file = &dirs[0][4];
+	char strin[200];
+
+	int cnt_tabs = 0, flag, chek = 0, cnt = 7;
+
+	strcpy(types[0], "void");
+	strcpy(types[1], "int");
+	strcpy(types[2], "char");
+	strcpy(types[3], "main");
+	strcpy(types[4], "longint");
+	strcpy(types[5], "double");
+	strcpy(types[6], "float");
+
+	strcpy(dirs[0], "New_");
+
+	FILE* in;
+	FILE* out;
+	int flag_F = 0;
+
+	do {
+		printf("Enter the name of project's main file or type \x1b[33m\"help\"\x1b[0m:\n");
+		scanf("%s", main_file);
+		//fgets(main_file, sizeof main_file, stdin); //Внезапно оно решило считывать перенос строки
+		//printf("Got \"%s\":\n", main_file);
+
+		if (strstr(main_file, "help"))
+		{
+			showHelp();
+			flag_F = 1;
+		}
+		if (strstr(main_file, "exit"))
+		{
+			exitApp();
+		}
+		if (strstr(main_file, "list") || strstr(main_file, "ls"))
+		{
+			showFiles();
+			flag_F = 1;
+		}
+
+		in = fopen(main_file, "r");
+
+		if (in == NULL)
+		{
+			if (flag_F != 1)
+			{
+				unluckee();
+			}
+		}
+	} while (in == NULL);
+
+	out = fopen(dirs[0], "w");
+
+	while (1)
+	{
+		flag = str_fit(in, out, comment, strin, types, cnt, &cnt_tabs, &chek, stack);
+
+		if (stack != NULL && (stack->type_flag == 4 || stack->type_flag == 5) && flag != 16 && chek == 0)
+		{
+			del(&stack);
+			put_tabs(out, cnt_tabs + 1);
+			chek = 0;
+		}
+		else if (flag == 10)
+		{
+			del(&stack);
+			del(&stack);
+			put_tabs(out, cnt_tabs);
+		}
+		else if (flag == 16)
+		{
+			put_tabs(out, cnt_tabs - 1);
+		}
+		else if(flag != 20)
+			put_tabs(out, cnt_tabs);
+
+		if (flag == 4 || flag == 5 || flag == 16 || flag == 6 || flag == 30)
+			insert(&stack, flag);
+
+		if (strin[0] == '\0')
+			break;
+		switch (flag)
+		{
+		case 0:
+			dir_correction(out, strin, dirs, cnt_d);
+			break;
+
+		case 1:
+			fprintf(out, "\n");
+			struct_correction(out, strin, types, cnt++);
+			break;
+
+		case 2:
+			fprintf(out, "\n");
+			func_correction(out, strin);
+			break;
+
+		case 3:
+			var_correction(out, strin);
+			break;
+
+		case 4:
+			condition_correction(out, strin, &chek);
+			break;
+
+		case 5:
+			for_correction(out, strin, &chek);
+			break;
+
+		case 6:
+			fprintf(out, "do\n");
+			for (int j = 0; j < 21; ++j)
+				strin[j] = '\0';
+			break;
+
+		case 10:
+			put_right_bracket(out, strin);
+			break;
+
+		case 12:
+			condition_correction(out, strin, &chek);
+			break;
+
+		case 13:
+			case_correction(out, strin);
+			break;
+
+		case 14:
+			break_correction(out, strin);
+			break;
+
+		case 15:
+			str_correction(out, strin);
+			break;
+
+		case 16:
+			put_left_bracket(out, strin);
+			break;
+
+		case 18:
+			after_struct_correction(out, strin, types, cnt++);
+			break;
+
+		case 19:
+			return_correction(out, strin);
+			break;
+
+		case 20:
+			big_com_correction(out, strin, cnt_tabs);
+			fprintf(out, "\n");
+			break;
+
+		case 21:
+			fprintf(out, "%s", strin);
+			break;
+
+		case 25:
+			after_do_correction(out, strin);
+			break;
+
+		case 30:
+			fprintf(out, "\n");
+			struct_correction(out, strin, types, cnt++);
+			break;
+
+		default:
+			for (int j = 0; j < 21; ++j)
+				strin[j] = '\0';
+			break;
+		}
+	}
+
+	fclose(in);
+	fclose(out);
+
+	for (int i = 1; i < *cnt_d; ++i) // хедеры
+	{
+		cnt_tabs = 0, flag;
+
+		FILE* in = fopen(&dirs[i][4], "r");
+		FILE* out = fopen(dirs[i], "w");
+
+		while (1)
+		{
+			flag = str_fit(in, out, comment, strin, types, cnt, &cnt_tabs, &chek, stack);
+
+			if (stack != NULL && (stack->type_flag == 4 || stack->type_flag == 5) && flag != 16 && chek == 0)
+			{
+				del(&stack);
+				put_tabs(out, cnt_tabs + 1);
+				chek = 0;
+			}
+			else if (flag == 10)
+			{
+				del(&stack);
+				del(&stack);
+				put_tabs(out, cnt_tabs);
+			}
+			else if (flag == 16)
+			{
+				put_tabs(out, cnt_tabs - 1);
+			}
+			else if (flag != 20)
+				put_tabs(out, cnt_tabs);
+
+			if (flag == 4 || flag == 5 || flag == 16 || flag == 6 || flag == 30)
+				insert(&stack, flag);
+
+			if (strin[0] == '\0')
+				break;
+			switch (flag)
+			{
+			case 0:
+				dir_correction(out, strin, dirs, cnt_d);
+				break;
+
+			case 1:
+				fprintf(out, "\n");
+				struct_correction(out, strin, types, cnt++);
+				break;
+
+			case 2:
+				fprintf(out, "\n");
+				func_correction(out, strin);
+				break;
+
+			case 3:
+				var_correction(out, strin);
+				break;
+
+			case 4:
+				condition_correction(out, strin, &chek);
+				break;
+
+			case 5:
+				for_correction(out, strin, &chek);
+				break;
+
+			case 6:
+				fprintf(out, "do\n");
+				for (int j = 0; j < 21; ++j)
+					strin[j] = '\0';
+				break;
+
+			case 10:
+				put_right_bracket(out, strin);
+				break;
+
+			case 12:
+				condition_correction(out, strin, &chek);
+				break;
+
+			case 13:
+				case_correction(out, strin);
+				break;
+
+			case 14:
+				break_correction(out, strin);
+				break;
+
+			case 15:
+				str_correction(out, strin);
+				break;
+
+			case 16:
+				put_left_bracket(out, strin);
+				break;
+
+			case 18:
+				after_struct_correction(out, strin, types, cnt++);
+				break;
+
+			case 19:
+				return_correction(out, strin);
+				break;
+
+			case 20:
+				big_com_correction(out, strin, cnt_tabs);
+				fprintf(out, "\n");
+				break;
+
+			case 21:
+				fprintf(out, "%s", strin);
+				break;
+
+			case 25:
+				after_do_correction(out, strin);
+				break;
+
+			case 30:
+				fprintf(out, "\n");
+				struct_correction(out, strin, types, cnt++);
+				break;
+
+			default:
+				for (int j = 0; j < 21; ++j)
+					strin[j] = '\0';
+				break; // пиздец
+			}
+		}
+
+		fclose(in);
+		fclose(out);
+	}
+}
+
+void exitApp()
+{
+	setColor2(2);
+	printf("Вы вышли из программы.");
+	setColor2(0);
+	exit(0);
+}
+
+void showHelp()
+{
+	setColor2(2);
+	//printf("Команда \"\x1b[0mlist\x1b[33m\" - показать доступные файлы, \nфлаг \"\x1b[0m+show\x1b[33m\" вместе с кол-вом файлов - показать исходный код, \nкоманда \"\x1b[0mexit\x1b[33m\" - выйти из программы;\n");
+	printf("Команда \"\x1b[0mlist\x1b[33m\" - показать доступные файлы, \nкоманда \"\x1b[0mexit\x1b[33m\" - выйти из программы.\n");
+	setColor2(0);
+}
+
+void showFiles()
+{
+	printf("Доступные файлы:\n");
+	setColor2(3);
+	//char command[50] = "dir /b *.txt *.c *.cpp *.h";
+	char command[50] = "dir /b *.cpp";
+	system(command); //пофиг
+	setColor2(0);
+}
+
+void unluckee()
+{
+	setColor2(1);
+	printf("Unluckee, please try again.\n");
+	setColor2(0);
+}
+
+void setColor2(int color)
+{
+	if (color == 1)
+	{
+		printf("\x1b[31m");
+	}
+
+	if (color == 2)
+	{
+		printf("\x1b[33m");
+	}
+
+	if (color == 3)
+	{
+		printf("\x1b[32;1m");
+	}
+
+	if (color == 4)
+	{
+		printf("\x1b[36m");
+	}
+
+	if (color == 5)
+	{
+		printf("\x1b[35;1m");
+	}
+
+	if (color == 0)
+	{
+		printf("\x1b[0m");
+	}
 }
