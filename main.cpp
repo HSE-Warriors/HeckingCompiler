@@ -33,14 +33,15 @@ int main()
 	KoshkinDoStuff();
 
 	//Функции Дена
-	
+
 	FunctionsGraph(Files, AmountOfFiles, Functions, AmountOfFunctions, MassOfNodes, MassOfRoots, &CountRoots);
 	InfiniteLoop(Files, AmountOfFiles, InfiniteLoopSrtings, &AmountOfInfiniteMessages);
-	
+
 	//функции Гоши
 
 	//вывод статистики
-	//printThings();
+	printThings();
+	ending();
 
 	return 0;
 }
