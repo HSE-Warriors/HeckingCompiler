@@ -311,33 +311,6 @@ void countThings(char givenString[])
 				printf("\x1b[35;1m \t> Count of mispelled variables: \x1b[33m%d -> %d\x1b[35;1m.\n\x1b[0m", temp, countOfMisspelledVariables);
 			}
 		}
-
-		unused?
-		if (flag_D == 1)
-		{
-			printf("\x1b[35;1m > Unused?\n\x1b[0m");
-		}
-		if (1 == 0) //доделать
-		{
-			temp = countOfUnusedVariables;
-			countOfUnusedVariables++;
-			getName(givenString, 0, 2, countOfUnusedVariables - 1);//0 - var, 1 - f(); 0 - regular, 1 - misspelled, 2 - unused, 3 - empty/selfdef
-			if (flag_D == 1)
-			{
-				printf("\x1b[35;1m \t> \x1b[31;1mYes, unused.\n\x1b[0m");
-				printf("\x1b[35;1m \t> Count of unused variables: \x1b[32;1m%d -> %d\x1b[35;1m.\n\x1b[0m", temp, countOfUnusedVariables);
-			}
-		}
-		else
-		{
-			if (flag_D == 1)
-			{
-				temp = countOfUnusedVariables;
-				printf("\x1b[35;1m \t> \x1b[32;1mNo, used.\n\x1b[0m");
-				printf("\x1b[35;1m \t> Count of unused variables: \x1b[33m%d -> %d\x1b[35;1m.\n\x1b[0m", temp, countOfUnusedVariables);
-			}
-		}
-
 		//empty?
 		if (flag_D == 1)
 		{
@@ -435,29 +408,6 @@ void countThings(char givenString[])
 				printf("\x1b[35;1m \t> \x1b[32;1mNo, it's first letter is upper.\n\x1b[0m");
 				printf("\x1b[35;1m \t> Count of misspelled functions: \x1b[32;1m%d -> %d\x1b[35;1m.\n\x1b[0m", temp, countOfMisspelledFunctions);
 			}
-		}
-		//unused?
-		if (flag_D == 1)
-		{
-			printf("\x1b[35;1m > Unused?\n\x1b[0m");
-		}
-		if (1 == 0) //доделать
-		{
-			temp = countOfUnusedFunctions;
-			countOfUnusedFunctions++;
-			getName(givenString, 1, 2, countOfUnusedFunctions - 1);//0 - var, 1 - f(); 0 - regular, 1 - misspelled, 2 - unused, 3 - empty/selfdef
-			if (flag_D == 1)
-			{
-				printf("\x1b[35;1m \t> Yes, unused.\n\x1b[0m");
-				printf("\x1b[35;1m \t> Count of unused functions: %d -> %d.\n\x1b[0m", temp, countOfMisspelledFunctions);
-			}
-		}
-
-		//selfdefined?
-		if (0 == 1) //Доделать
-		{
-			countOfSelfDefinedFunctions++;
-			getName(givenString, 1, 3, countOfSelfDefinedFunctions - 1);//0 - var, 1 - f(); 0 - regular, 1 - misspelled, 2 - unused, 3 - empty/selfdef
 		}
 	}
 	else
@@ -627,7 +577,24 @@ void printThings()
 		char ListAlreadyPrinted[50][50] = { 0 };
 		int CountList = 0;
 		printf("\nRecursive functions:\n");
-		printf("Skipped...\n");
+		for (int i = 0; i < CountRoots; ++i)
+		{
+			DFS(MassOfRoots[i], NULL, ListAlreadyPrinted, &CountList);
+			CleanFlags(MassOfRoots[i]);
+		}
+		return;
+
+		printf("\nGraph of functions calls:\n");
+		for (int i = 0; i < countOfFunctions; ++i)
+		{
+			printf("%s: ", MassOfNodes[i]->Name);
+			for (int j = 0; j < MassOfNodes[i]->AmountOfChildren; ++j)
+			{
+				printf("%s", MassOfNodes[i]->children[j]->Name);
+				if (j != MassOfNodes[i]->AmountOfChildren - 1)
+					printf(",");
+			}
+			printf("\n");
 	}
 	else
 	{
@@ -660,9 +627,8 @@ void sayMessage(char which[99])
 void ending()
 {
 	setColor(3);
-	printf("\n\n�����.\n\n");
+	printf("\n\Конец.\n\n");
 	setColor(0);
-	printf("������� ����� ������� ����� ����������...\n");
 	int blink = getch();
 	FILE* banner = fopen("banner.txt", "r");
 	char string[150];

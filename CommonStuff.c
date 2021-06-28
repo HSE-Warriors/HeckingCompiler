@@ -49,17 +49,16 @@ void setColor(int color)
 void showHelp()
 {
 	setColor2(2);
-	printf("������� \"\x1b[0mlist\x1b[33m\" - �������� ��������� �����, \n������� \"\x1b[0mexit\x1b[33m\" - ����� �� ���������.\n");
+	printf("Команда \"\x1b[0mlist\x1b[33m\" - показать доступные файлы, \команда \"\x1b[0mexit\x1b[33m\" - выйти из программы.\n");
 	setColor2(0);
 }
 
 void showFiles()
 {
-	printf("��������� �����:\n");
+	printf("Доступеые файлы:\n");
 	setColor2(3);
-	//char command[50] = "dir /b *.txt *.c *.cpp *.h";
 	char command[50] = "dir /b *.cpp";
-	system(command); //�����
+	system(command);
 	setColor2(0);
 }
 
@@ -73,7 +72,7 @@ void unluckee()
 void exitApp()
 {
 	setColor(2);
-	printf("�� ����� �� ���������.");
+	printf("Вы вышли из программы.");
 	setColor(0);
 	exit(0);
 }
