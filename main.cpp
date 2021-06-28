@@ -33,18 +33,11 @@ int main()
 	KoshkinDoStuff();
 
 	//Функции Дена
+
 	FunctionsGraph(Files, AmountOfFiles, Functions, AmountOfFunctions, MassOfNodes, MassOfRoots, &CountRoots);
 	InfiniteLoop(Files, AmountOfFiles, InfiniteLoopSrtings, &AmountOfInfiniteMessages);
 
 	//функции Гоши
-	FILE* FILE_IN = NULL;
-	char filelist[50][25] = { 0 };
-	for (int i = 0; i < AmountOfFiles; ++i)
-		strcpy(filelist[i], Files[i]);
-	CountMaxLoopDepth(FILE_IN, filelist, AmountOfFiles, &maxCycled);
-	EnlistMutuallyCalledHeaders(FILE_IN, filelist, AmountOfFiles, callPairList, mutualCalls, &mutualCallsCnt);
-	DetectCustomFunction(FILE_IN, filelist, AmountOfFiles, customFuncList, &customFuncCnt);
-	DetectCustomTypes(FILE_IN, filelist, AmountOfFiles, customTypesList, &customTypesCnt);
 
 	//вывод статистики
 	printThings();
