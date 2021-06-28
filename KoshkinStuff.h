@@ -9,6 +9,7 @@ void getName(char givenString[], int mode, int type, int number); //0 - var, 1 -
 void countThings(char givenString[]);
 void printThings();
 void sayMessage(char which[99]);
+void ending();
 
 int countOfFiles = 0;
 char namesOfFiles[50][256] = { 0 };

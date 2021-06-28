@@ -22,7 +22,57 @@ void grabStuff(int AmountOfFiles, char Files[][40], int * AmountOfFunctions, cha
 
 void KoshkinDoStuff()
 {
+	char lineOfCode[256] = "";
+	for (int i = 0; i < countOfFiles; i++)
+	{
 
+		fileStream = fopen(namesOfFiles[i], "r");
+		if (fileStream == NULL)
+		{
+			sayMessage("FE");
+		}
+		else
+		{
+			printf("\n���� �%d - \"%s\":\n", i + 1, namesOfFiles[i]);
+		}
+
+		//fgets(lineOfCode, sizeof lineOfCode, file);
+		while (fgets(lineOfCode, sizeof lineOfCode, fileStream) != NULL)
+		{
+			numberOfCurrentString++;
+			printOrigin(lineOfCode);
+			isItMain(lineOfCode, namesOfFiles, i);
+			countThings(lineOfCode);
+		}
+		//saveForOthers(namesOfFunctions, countOfFiles);
+		countOfStrings += numberOfCurrentString;
+		numberOfCurrentString = 0;
+
+	}
+	fclose(fileStream);
+
+	for (int i = 0; i < countOfFiles; i++)
+	{
+
+		fileStream = fopen(namesOfFiles[i], "r");
+		if (fileStream == NULL)
+		{
+			sayMessage("FE");
+		}
+
+		while (fgets(lineOfCode, sizeof lineOfCode, fileStream) != NULL)
+		{
+			doubleCheck(lineOfCode);
+		}
+	}
+	fclose(fileStream);
+
+	if (flag_D == 1)
+	{
+		printf("\x1b[32;1m > Second check is done, results:\n\x1b[0m");
+		printf("\x1b[32;1mVariables:\nCount: %d\nMisspelled: %d\nUnused: %d\nEmpty: %d\n\x1b[0m", countOfVariables, countOfMisspelledVariables, countOfUnusedVariables, countOfEmptyVariables);
+		printf("\x1b[32;1mFunctions:\nCount: %d\nMisspelled: %d\nUnused: %d\x1b[0m", countOfFunctions, countOfMisspelledFunctions, countOfUnusedFunctions);
+	}
 }
 
 void printOrigin(char givenString[])
@@ -605,4 +655,20 @@ void sayMessage(char which[99])
 			setColor(0);
 		}
 	}
+}
+
+void ending()
+{
+	setColor(3);
+	printf("\n\n�����.\n\n");
+	setColor(0);
+	printf("������� ����� ������� ����� ����������...\n");
+	int blink = getch();
+	FILE* banner = fopen("banner.txt", "r");
+	char string[150];
+	while (fgets(string, sizeof string, banner) != NULL)
+	{
+		fputs(string, stdout);
+	}
+	printf("\n\n");
 }
