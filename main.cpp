@@ -2,6 +2,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "CommonStuff.h"
+//#include Lexa
+//#include Den
+#include "KoshkinStuff.h"
+//#include Ribs
+
 
 //Common I/O
 char Files[50][40] = { 0 }; //Для Лёши, чтобы обмениваться с остальными
@@ -17,19 +23,25 @@ int CountRoots = 0;
 
 int main()
 {
+	setLocale();
+	enableScrolling();
+
 	//Функции Лёши
 	main_correction(Files, &AmountOfFiles);
 
 	//Функции Саши
+	KoshkinDoStuff();
 
 	//Функции Дена
-	
+
 	FunctionsGraph(Files, AmountOfFiles, Functions, AmountOfFunctions, MassOfNodes, MassOfRoots, &CountRoots);
 	InfiniteLoop(Files, AmountOfFiles, InfiniteLoopSrtings, &AmountOfInfiniteMessages);
-	
+
 	//функции Гоши
 
 	//вывод статистики
+	printThings();
+	ending();
 
 	return 0;
 }
